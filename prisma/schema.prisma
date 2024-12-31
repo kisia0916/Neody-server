@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id  String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @unique
+  userName String
+  email String @unique
+  userIcon  String
+  profileMess String?
+  weekPoints Int @default(0)
+  allPoints Int @default(0)
+  joinedGroup Group? @relation(fields: [joinedGroupId],references: [id])
+  joinedGroupId String? @db.ObjectId
+  lastStudyDate DateTime?
+  nowStudyStreak Int @default(0)
+  maxStudyStreak Int  @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Group {
+  id  String @id @default(auto()) @map("_id") @db.ObjectId
+  groupName String
+  groupIcon String
+  hostUserId String
+  WeekPoint Int @default(0)
+  allPoint Int @default(0)
+  members User[]
+}
+
+model Friends {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String
+  friendUserId String
+  createdAt DateTime @default(now())
+}
+
+model UserStudyRecord {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  withUsers String[]
+  message String?
+  subject String
+  studyTime Int
+  createdAt DateTime
+}
